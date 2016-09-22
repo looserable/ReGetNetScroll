@@ -1,0 +1,87 @@
+func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+
+let count = (self.imgArray?.count)! - 1
+//可能会存在当我从本地读的时候，你正在写。
+if Int((self.scrollView?.contentOffset.x)!)/SCREEN_WIDTH == 0{
+
+if  self.currentIndex! == 0 {
+//中间的imageview
+self.centerImageVC?.frame = CGRect(x:SCREEN_WIDTH * count, y: 0, width: SCREEN_WIDTH, height: self.adHeight!)
+
+//第一个imageview
+self.firstImageVC?.frame  = CGRect(x: SCREEN_WIDTH * (count - 1), y: 0, width: SCREEN_WIDTH, height: self.adHeight!)
+
+//最后一个imageView
+self.lastImageVC?.frame   = CGRect(x: 0, y: 0, width: SCREEN_WIDTH, height: self.adHeight!)
+
+//设置scrollview的偏移量
+self.scrollView?.contentOffset = CGPoint(x: SCREEN_WIDTH * count, y: 0)
+self.currentIndex = count
+}else{
+//中间的imageview
+self.centerImageVC?.frame = CGRect(x:0, y: 0, width: SCREEN_WIDTH, height: self.adHeight!)
+
+//第一个imageview
+self.firstImageVC?.frame  = CGRect(x: SCREEN_WIDTH * count, y: 0, width: SCREEN_WIDTH, height: self.adHeight!)
+
+//最后一个imageView
+self.lastImageVC?.frame   = CGRect(x:SCREEN_WIDTH , y: 0, width: SCREEN_WIDTH, height: self.adHeight!)
+
+//设置scrollview的偏移量
+self.scrollView?.contentOffset = CGPoint(x: 0, y: 0)
+self.currentIndex = 0
+}
+
+}else if Int((self.scrollView?.contentOffset.x)!)/SCREEN_WIDTH == count{
+
+if self.currentIndex! == (self.imgArray?.count)! - 1 {
+//中间的imageview
+self.centerImageVC?.frame = CGRect(x: 0, y: 0, width: SCREEN_WIDTH, height: self.adHeight!)
+
+//第一个imageview
+self.firstImageVC?.frame  = CGRect(x: SCREEN_WIDTH * count, y: 0, width: SCREEN_WIDTH, height: self.adHeight!)
+
+//最后一个imageView
+self.lastImageVC?.frame   = CGRect(x: SCREEN_WIDTH, y: 0, width: SCREEN_WIDTH, height: self.adHeight!)
+
+//设置scrollview的偏移量
+self.scrollView?.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+self.currentIndex = 0
+}else{
+//中间的imageview
+self.centerImageVC?.frame = CGRect(x: SCREEN_WIDTH * count, y: 0, width: SCREEN_WIDTH, height: self.adHeight!)
+
+//第一个imageview
+self.firstImageVC?.frame  = CGRect(x: SCREEN_WIDTH * (count - 1), y: 0, width: SCREEN_WIDTH, height: self.adHeight!)
+
+//最后一个imageView
+self.lastImageVC?.frame   = CGRect(x: 0, y: 0, width: SCREEN_WIDTH, height: self.adHeight!)
+
+//设置scrollview的偏移量
+self.scrollView?.setContentOffset(CGPoint(x: SCREEN_WIDTH * count, y: 0), animated: true)
+self.currentIndex = count
+}
+
+}else{
+
+let index = Int((self.scrollView?.contentOffset.x)!)/SCREEN_WIDTH
+//中间的imageview
+self.centerImageVC?.frame = CGRect(x: SCREEN_WIDTH * index, y: 0, width: SCREEN_WIDTH, height: self.adHeight!)
+
+//第一个imageview
+self.firstImageVC?.frame  = CGRect(x: SCREEN_WIDTH * (index - 1), y: 0, width: SCREEN_WIDTH, height: self.adHeight!)
+
+//最后一个imageView
+self.lastImageVC?.frame   = CGRect(x: SCREEN_WIDTH * (index + 1), y: 0, width: SCREEN_WIDTH, height: self.adHeight!)
+
+//设置scrollview的偏移量
+self.scrollView?.setContentOffset(CGPoint(x: SCREEN_WIDTH * index, y: 0), animated: true)
+
+self.currentIndex = index
+}
+
+//self.firstImageVC?.image = nil
+//self.firstImageVC?.backgroundColor = UIColor.orange
+//self.lastImageVC?.image = nil
+//self.lastImageVC?.backgroundColor = UIColor.purple
+}
