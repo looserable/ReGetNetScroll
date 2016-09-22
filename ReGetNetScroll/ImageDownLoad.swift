@@ -38,21 +38,40 @@ class ImageDownLoad: Operation {
     override func main() {
         autoreleasepool {
             //图片的操作放到这里面
-            
-            
             if self.isCancelled == true{
                 return
             }
+            //1.路径准备
+            var image:UIImage?
+            let path = NSHomeDirectory().appending("/Image/\(self.imageUrl!)")
+            let fileUrl = NSURL(fileURLWithPath: path)
+            let fileManager = FileManager.default
             
-            var url = NSURL.init(string: self.imageUrl!)
-            var imgData = NSData.init(contentsOf: url as! URL)
-            if self.isCancelled == true{
-                url     = nil
-                imgData = nil
-                return
+            //2.判断该路径下是否存在，如果存在，直接读取。否则，先下载，然后缓存
+            if fileManager.fileExists(atPath: path){
+                let imageData = NSData(contentsOfFile: path)
+                    image     = UIImage(data: imageData as! Data)
+            }else{
+                var url = NSURL.init(string: self.imageUrl!)
+                var imgData = NSData.init(contentsOf: url as! URL)
+                if self.isCancelled == true{
+                    url     = nil
+                    imgData = nil
+                    return
+                }
+                image = UIImage(data: imgData as! Data)
+                
+                let pngData = UIImageJPEGRepresentation(image!, 0.5)
+                do{
+                    try pngData?.write(to: fileUrl as URL, options:Data.WritingOptions.atomic)
+                }catch {
+                    print("when write,there is something wrong")
+                }
             }
+
             
-            var image = UIImage(data: imgData as! Data)
+            
+            
             if self.isCancelled == true{
                 image = nil
                 return
@@ -61,9 +80,10 @@ class ImageDownLoad: Operation {
             if self.delegate != nil{
                 let indexNum = NSNumber.init(value: self.index!)
                 if image == nil{
-                    print(self.imageUrl)
+                    print("元素：\(self.index)中的地址:\(self.imageUrl)无法取得图片")
                     return
                 }
+                
                 let array    = [image,indexNum] as [Any]
                 
                 self.performSelector(onMainThread: #selector(passBack(array:)), with: array, waitUntilDone: true)
