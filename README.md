@@ -7,11 +7,12 @@
 
 2，通过如下代码即可创建一个自动循环播放的广告滚动栏: 
 
-`//1,创建一个AdScrollview的对象
-    let adView = AdScrollView(frame: CGRect(x: 0, y: 50, width: SCREEN_WIDTH, height: 180))`
+     //1,创建一个AdScrollview的对象
+      let adView = AdScrollView(frame: CGRect(x: 0, y: 50, width: SCREEN_WIDTH, height: 180))
 
-  `//2,给一个数组
-    adView.setImageArray(imgArry: ["https://pixabay.com/static/uploads/photo/2016/08/11/08/43/potatoes-1585060_640.jpg","https://pixabay.com/static/uploads/photo/2016/08/25/19/17/boot-1620452_640.jpg","https://pixabay.com/static/uploads/photo/2016/09/15/21/02/alpaca-167     2647_640.jpg"])`
+     //2,给一个数组
+       adView.setImageArray(imgArry: ["https://pixabay.com/static/uploads/photo/2016/08/11/08/43/potatoes-1585060_640.jpg","https://pixabay.com/static/uploads/photo/2016/08/25/19/17/boot-1620452_640.jpg","https://pixabay.com/static/uploads/photo/2016/09/15/21/02/alpaca-1672647_640.jpg"])
+`
 
 3,oc 的项目将这两个文件拖进去的时候，可从网上查找混编的方法，应该不难。
 
