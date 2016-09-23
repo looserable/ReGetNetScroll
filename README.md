@@ -7,11 +7,19 @@
 
 2，通过如下代码即可创建一个自动循环播放的广告滚动栏: 
 
-     //1,创建一个AdScrollview的对象
-      let adView = AdScrollView(frame: CGRect(x: 0, y: 50, width: SCREEN_WIDTH, height: 180))
+        //1,创建一个AdScrollview的对象
+        let adView = AdScrollView(frame: CGRect(x: 0, y: 50, width: SCREEN_WIDTH, height: 180))
+        
+        //2,设置手动滚动有效果 值得注意的是，设置可以滑动的话一定要设置在数组赋值之前
+        adView.scroEnable = true
 
-     //2,给一个数组
-       adView.setImageArray(imgArry: ["https://pixabay.com/static/uploads/photo/2016/08/11/08/43/potatoes-1585060_640.jpg","https://pixabay.com/static/uploads/photo/2016/08/25/19/17/boot-1620452_640.jpg","https://pixabay.com/static/uploads/photo/2016/09/15/21/02/alpaca-1672647_640.jpg"])
+        //3,给一个数组
+        adView.setImageArray(imgArry: ["https://pixabay.com/static/uploads/photo/2016/08/11/08/43/potatoes-1585060_640.jpg","https://pixabay.com/static/uploads/photo/2016/08/25/19/17/boot-1620452_640.jpg","https://pixabay.com/static/uploads/photo/2016/09/15/21/02/alpaca-1672647_640.jpg"])
+        
+        //4,设置代理，具体代理方法见demo
+        adView.delegate = self
+
+       
 
 
 3,oc 的项目将这两个文件拖进去的时候，可从网上查找混编的方法，应该不难。
@@ -26,3 +34,7 @@
 2,加入是否在自动循环中，可以手动拖动的属性设置。
 
 3，加入点击图片之后的代理方法。
+
+#Update 0923
+future模块儿中所述的功能都已经完善
+
