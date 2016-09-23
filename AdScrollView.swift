@@ -18,10 +18,18 @@ let SCREEN_WIDTH  = Int(UIScreen.main.bounds.size.width)
 let SCREEN_HEIGHT = Int(UIScreen.main.bounds.size.height)
 
 
+protocol touchAdImageDelegate {
+    func touchAdImage(atIndex index:Int)
+}
+
 class AdScrollView: UIView,imageDownLoadDelegate,UIScrollViewDelegate {
     var adHeight   :Int?
     var pageControl:UIPageControl?
     var timer      :Timer?
+    var delegate   :touchAdImageDelegate?
+    
+    //用来解决图片的自动滚动是否可以被打断。
+    var scroEnable    :Bool
     //滚动图用来展示图片
     var scrollView    :UIScrollView?
     
@@ -40,6 +48,7 @@ class AdScrollView: UIView,imageDownLoadDelegate,UIScrollViewDelegate {
     var lastImageVC  :UIImageView?
     
     override init(frame: CGRect) {
+        self.scroEnable = false
         super.init(frame: frame)
     }
     
@@ -70,6 +79,7 @@ class AdScrollView: UIView,imageDownLoadDelegate,UIScrollViewDelegate {
         
         //队列的初始化
         self.operationQueue              = OperationQueue.init()
+        self.operationQueue?.maxConcurrentOperationCount = (self.imgArray?.count)!
         
         //scrollview的属性设置
         let count                        = self.imgArray?.count
@@ -77,7 +87,7 @@ class AdScrollView: UIView,imageDownLoadDelegate,UIScrollViewDelegate {
         self.scrollView?.delegate        = self
         self.scrollView?.isPagingEnabled = true
         self.scrollView?.showsHorizontalScrollIndicator = false
-        
+        self.scrollView?.isScrollEnabled = self.scroEnable
 
         
         //2.将子视图添加至父视图
@@ -99,6 +109,11 @@ class AdScrollView: UIView,imageDownLoadDelegate,UIScrollViewDelegate {
             let imageView = UIImageView(frame: CGRect(x: (index + 1) * SCREEN_WIDTH, y: 0, width: SCREEN_WIDTH, height: self.adHeight!))
             imageView.tag = 10000 + index;
             self.scrollView?.addSubview(imageView)
+            
+            imageView.isUserInteractionEnabled = true
+            
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(touchEvent(tap:)))
+            imageView.addGestureRecognizer(tapGesture)
             
         }
         
@@ -143,20 +158,37 @@ class AdScrollView: UIView,imageDownLoadDelegate,UIScrollViewDelegate {
     }
     
     
-    /*func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        if self.scroEnable == false {
+            return
+        }
+        self.timer?.fireDate = Date.distantFuture
+        
+    }
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         let isTrue = Thread.isMainThread
         print(isTrue)
+        
+        if self.scroEnable == false {
+            return
+        }
         let index = Int(scrollView.contentOffset.x)/SCREEN_WIDTH
         
         if index == 0 {
             scrollView.setContentOffset(CGPoint(x: SCREEN_WIDTH * (self.imgArray?.count)!, y: 0), animated: false)
+            self.currentIndex = (self.imgArray?.count)! - 1
         }else if index == (self.imgArray?.count)! + 1{
             scrollView.setContentOffset(CGPoint(x: SCREEN_WIDTH, y: 0),animated: false)
+            self.currentIndex = 0
         }
-        self.pageControl?.currentPage = Int((self.scrollView?.contentOffset.x)!)/SCREEN_WIDTH - 1 % (self.imgArray?.count)!
         
-    }*/
-    
+        self.currentIndex = index - 1
+        self.pageControl?.currentPage = Int((self.scrollView?.contentOffset.x)!)/SCREEN_WIDTH - 1 % (self.imgArray?.count)!
+        //等待5秒再重新唤醒计时器
+        self.perform(#selector(reTimer), with: nil, afterDelay: 5, inModes: [RunLoopMode.commonModes])
+        
+    }
     
     
     func imageDownLoadFinsishWithImage(image:UIImage,index:Int){
@@ -169,6 +201,18 @@ class AdScrollView: UIView,imageDownLoadDelegate,UIScrollViewDelegate {
             self.lastImageVC?.image = image
         }else if index == (self.imgArray?.count)! - 1{
             self.firstImageVC?.image = image
+        }
+    }
+    
+    //MARK:一些selector方法
+    func reTimer(){
+        self.timer?.fireDate = Date()
+    }
+    
+    func touchEvent(tap:UITapGestureRecognizer){
+        let imageView = tap.view as! UIImageView
+        if self.delegate != nil{
+            self.delegate?.touchAdImage(atIndex: imageView.tag - 10000)
         }
     }
 }
